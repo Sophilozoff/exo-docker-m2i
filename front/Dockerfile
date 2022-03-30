@@ -1,8 +1,10 @@
-FROM node:12.14 as build
+FROM node:14.15 as build
 WORKDIR /app
-COPY package.json .
+COPY ./package.json .
 RUN npm install
 COPY . .
-EXPOSE 4200
-CMD ["npm", "start"]
+RUN npm run build
 
+FROM nginx:latest
+WORKDIR /usr/share/nginx/html
+COPY --from=build /app/dist/express-gaumont .
